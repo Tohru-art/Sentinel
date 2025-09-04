@@ -1010,9 +1010,10 @@ async def show_help_menu(interaction: discord.Interaction):
                          "`/passwordcheck` Password analyzer",
                          inline=True)
 
-    # System
-    help_embed.add_field(name="⚙️ System",
-                         value="`/ping` Bot status\n"
+    # Fun & System
+    help_embed.add_field(name="🎱 Fun & System",
+                         value="`/8ball` Magic 8-Ball answers\n"
+                         "`/ping` Bot status\n"
                          "`/about` Bot info & credits",
                          inline=True)
 
@@ -1046,7 +1047,7 @@ async def show_about_info(interaction: discord.Interaction):
 
     # Version info
     about_embed.add_field(name="🚀 Version",
-                          value="**2.0.0**\n*20 commands*",
+                          value="**2.0.0**\n*21 commands*",
                           inline=True)
 
     # Status
@@ -1852,6 +1853,66 @@ async def analyze_password_strength(interaction: discord.Interaction,
         print(f"❌ Password analysis error: {e}")
 
 
+@study_bot.tree.command(name="8ball", description="Ask the Magic 8-Ball any question!")
+@app_commands.describe(question="What question do you want to ask the Magic 8-Ball?")
+async def magic_8ball(interaction: discord.Interaction, question: str):
+    """Magic 8-Ball command for fun predictions and answers."""
+    await interaction.response.defer()
+    
+    # Classic Magic 8-Ball responses
+    responses = [
+        # Positive responses
+        "🔮 **It is certain**",
+        "🔮 **It is decidedly so**", 
+        "🔮 **Without a doubt**",
+        "🔮 **Yes definitely**",
+        "🔮 **You may rely on it**",
+        "🔮 **As I see it, yes**",
+        "🔮 **Most likely**",
+        "🔮 **Outlook good**",
+        "🔮 **Yes**",
+        "🔮 **Signs point to yes**",
+        
+        # Non-committal responses
+        "🔮 **Reply hazy, try again**",
+        "🔮 **Ask again later**", 
+        "🔮 **Better not tell you now**",
+        "🔮 **Cannot predict now**",
+        "🔮 **Concentrate and ask again**",
+        
+        # Negative responses
+        "🔮 **Don't count on it**",
+        "🔮 **My reply is no**",
+        "🔮 **My sources say no**",
+        "🔮 **Outlook not so good**",
+        "🔮 **Very doubtful**"
+    ]
+    
+    import random
+    response = random.choice(responses)
+    
+    # Create fun 8-ball embed
+    ball_embed = discord.Embed(
+        title="🎱 Magic 8-Ball",
+        description="*The mystical sphere has spoken!*",
+        color=0x8B00FF)  # Purple color for mystical theme
+    
+    ball_embed.add_field(
+        name="❓ **Your Question**", 
+        value=f"*\"{question}\"*",
+        inline=False)
+    
+    ball_embed.add_field(
+        name="🔮 **The Answer**",
+        value=response,
+        inline=False)
+    
+    ball_embed.set_footer(text="🎱 Magic 8-Ball • For entertainment purposes only!")
+    
+    await interaction.followup.send(embed=ball_embed)
+    print(f"🎱 {interaction.user.name} asked the Magic 8-Ball: {question}")
+
+
 @study_bot.tree.command(name="ping",
                         description="Check bot response time and status")
 async def ping_bot_status(interaction: discord.Interaction):
@@ -1880,7 +1941,7 @@ async def ping_bot_status(interaction: discord.Interaction):
     ping_embed.add_field(
         name="🔧 **Components**",
         value=
-        f"**Servers:** {len(study_bot.guilds)}\n**Commands:** 17 **Active**\n**Database:** ✅ **Ready**",
+        f"**Servers:** {len(study_bot.guilds)}\n**Commands:** 21 **Active**\n**Database:** ✅ **Ready**",
         inline=True)
 
     ping_embed.set_footer(
