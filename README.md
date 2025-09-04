@@ -1,6 +1,6 @@
 # Sentinel - AI Study Bot
 
-## Project Overview 1
+## Project Overview 
 An advanced AI-powered Discord bot designed for comprehensive study assistance across any subject. The bot provides AI-generated practice questions, explanations, flashcards, cybersecurity tools, and productivity features for students and professionals.
 
 ## Features
