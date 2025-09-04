@@ -100,6 +100,7 @@ python main.py
 ### Productivity Tools
 - `/pomodoro [session_type]` - Start study/break timer sessions
 - `/stoppomodoro` - Stop current Pomodoro session
+- `/pomodorostatus` - Check current session progress
 - `/leaderboard` - View competitive rankings and study leaders
 - `/achievements` - View earned badges and achievement progress
 
@@ -109,11 +110,7 @@ python main.py
 - `/scan <host> <port>` - Network port scanning  
 - `/hash <text>` - SHA-256 hash generation
 - `/iplookup <ip>` - IP address information lookup
-
-### System Commands
 - `/ping` - Bot status check
-- `/help` - View all available bot commands
-- `/about` - Bot information and credits
 
 ## Configuration
 - **API Keys Required**: 
