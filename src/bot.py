@@ -950,6 +950,9 @@ async def show_achievements(interaction: discord.Interaction):
     description="View all available bot commands with detailed explanations")
 async def show_help_menu(interaction: discord.Interaction):
     """Display comprehensive help menu with all bot commands."""
+    # Respond immediately to prevent timeout
+    await interaction.response.defer()
+    
     help_embed = discord.Embed(
         title="Sentinel • AI Study Bot",
         description="*Professional AI-powered study platform for any subject*",
@@ -997,7 +1000,7 @@ async def show_help_menu(interaction: discord.Interaction):
     help_embed.set_footer(
         text="Quick Start: /selectcert → /practice → /analysis")
 
-    await interaction.response.send_message(embed=help_embed)
+    await interaction.followup.send(embed=help_embed)
     print(f"❓ {interaction.user.name} viewed the help menu")
 
 
