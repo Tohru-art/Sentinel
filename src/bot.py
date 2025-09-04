@@ -225,6 +225,9 @@ async def select_certification_focus(interaction: discord.Interaction,
     description="View your comprehensive study progress and statistics")
 async def display_study_statistics(interaction: discord.Interaction):
     """Show users their study progress, statistics, and achievements."""
+    # Respond immediately to prevent timeout
+    await interaction.response.defer()
+    
     user_discord_id = interaction.user.id
 
     # Get user data from database
@@ -233,7 +236,7 @@ async def display_study_statistics(interaction: discord.Interaction):
 
     # Check if user has selected a certification yet
     if not user_data.get("selected_cert"):
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "📊 No study data found. Start studying with `/selectcert` to track your progress!",
             ephemeral=True)
         return
@@ -290,7 +293,7 @@ async def display_study_statistics(interaction: discord.Interaction):
 
     stats_embed.set_footer(
         text="Live tracking • Use /analysis for AI insights")
-    await interaction.response.send_message(embed=stats_embed)
+    await interaction.followup.send(embed=stats_embed)
     print(f"📊 User {interaction.user.name} viewed their study statistics")
 
 
@@ -322,7 +325,9 @@ async def generate_practice_questions(interaction: discord.Interaction,
 
     # Validate user has selected a certification
     if not user_data.get("selected_cert"):
-        await interaction.response.send_message(
+        # Defer response immediately to prevent timeout
+        await interaction.response.defer(ephemeral=True)
+        await interaction.followup.send(
             "❌ Please select a certification first using `/selectcert`!",
             ephemeral=True)
         return
@@ -1833,6 +1838,9 @@ async def analyze_password_strength(interaction: discord.Interaction,
                         description="Check bot response time and status")
 async def ping_bot_status(interaction: discord.Interaction):
     """Check bot latency and status."""
+    # Respond immediately to prevent timeout
+    await interaction.response.defer()
+    
     start_time = datetime.utcnow()
 
     # Create modern status embed
@@ -1840,9 +1848,6 @@ async def ping_bot_status(interaction: discord.Interaction):
         title="System Status",
         description="*Real-time health check and performance metrics*",
         color=0x2B2D31)
-
-    # Calculate response time
-    await interaction.response.send_message(embed=ping_embed)
 
     response_time = (datetime.utcnow() - start_time).total_seconds() * 1000
 
@@ -1863,7 +1868,7 @@ async def ping_bot_status(interaction: discord.Interaction):
     ping_embed.set_footer(
         text="🚀 All systems operational • CompTIA Study Bot ready")
 
-    await interaction.edit_original_response(embed=ping_embed)
+    await interaction.followup.send(embed=ping_embed)
     print(f"🏓 Ping check by {interaction.user.name} - {response_time:.1f}ms")
 
 
