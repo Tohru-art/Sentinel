@@ -725,45 +725,61 @@ async def show_help_menu(interaction: discord.Interaction):
 
 @study_bot.tree.command(name="about", description="View bot information, creator credits, and development details")
 async def show_about_info(interaction: discord.Interaction):
-    """Display bot information and creator credits with sleek professional UI."""
+    """Display bot information and creator credits with clean professional UI."""
     about_embed = discord.Embed(
         title="About Sentinel AI Study Bot",
         description="*Professional AI-powered study assistant for Discord*",
         color=0x2B2D31
     )
     
-    # Sleek Bot Details Section
+    # Clean Bot Details Section
     about_embed.add_field(
         name="🤖 **Bot Details**",
-        value="```yaml\nName: Sentinel AI Study Bot\nVersion: 2.0.0\nFeatures: 18 Commands\nStatus: 100% Free```",
+        value="**Name:** Sentinel AI Study Bot\n"
+              "**Version:** 2.0.0\n" 
+              "**Features:** 18 Commands\n"
+              "**Status:** 100% Free",
         inline=True
     )
     
-    # Creator Credits Section
+    # Creator Credits Section  
     about_embed.add_field(
         name="👨‍💻 **Created By**",
-        value="```yaml\nDeveloper: Yorouki\nGitHub: github.com/Tohru-art/Sentinel\nType: Open Source Project\nYear: 2025```",
+        value="**Developer:** Yorouki\n"
+              "**GitHub:** github.com/Tohru-art/Sentinel\n"
+              "**Type:** Open Source Project\n"
+              "**Year:** 2025",
         inline=True
     )
     
     # Technology Stack Section
     about_embed.add_field(
         name="⚡ **Technology**",
-        value="```yaml\nLanguage: Python 3.11\nAI: OpenAI GPT-3.5\nFramework: Discord.py\nPlatform: Replit```",
+        value="**Language:** Python 3.11\n"
+              "**AI:** OpenAI GPT-3.5\n"
+              "**Framework:** Discord.py\n" 
+              "**Platform:** Replit",
         inline=True
     )
     
     # Key Features with clean formatting
     about_embed.add_field(
         name="✨ **Key Features**",
-        value="```diff\n+ AI Practice Questions & Explanations\n+ Smart Flashcard Generation\n+ Adaptive Learning System\n+ Cybersecurity Tools Suite\n+ Pomodoro Study Sessions\n+ Progress Tracking & Analytics```",
+        value="+ AI Practice Questions & Explanations\n"
+              "+ Smart Flashcard Generation\n"
+              "+ Adaptive Learning System\n"
+              "+ Cybersecurity Tools Suite\n"
+              "+ Pomodoro Study Sessions\n"
+              "+ Progress Tracking & Analytics",
         inline=False
     )
     
-    # Professional Support Section
+    # Support Section
     about_embed.add_field(
         name="🛠️ **Support & Development**",
-        value="```ansi\n\u001b[32mSentinel is actively maintained and updated regularly.\u001b[0m\n\u001b[36mAll features are completely free to encourage learning!\u001b[0m\n\u001b[33m⭐ Star us on GitHub: github.com/Tohru-art/Sentinel\u001b[0m```",
+        value="Sentinel is actively maintained and updated regularly.\n"
+              "All features are completely free to encourage learning!\n"
+              "⭐ **Star us on GitHub:** github.com/Tohru-art/Sentinel",
         inline=False
     )
     
