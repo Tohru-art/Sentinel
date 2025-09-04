@@ -18,7 +18,7 @@ from discord import app_commands
 from .database.models import (initialize_database, get_user_data,
                               update_user_data, get_daily_champions,
                               get_accuracy_masters, get_study_legends)
-from .database.achievements import check_achievements
+from .database.achievements import check_achievements, get_user_achievements
 from .ai.adaptive import get_weak_spots, get_user_strengths
 from .ai.openai_client import openai_client, generate_study_recommendations
 from .ui.components import PracticeQuestionView
@@ -733,6 +733,173 @@ async def show_study_analysis(interaction: discord.Interaction):
         print(f"❌ Analysis error: {e}")
 
 
+@study_bot.tree.command(
+    name="weakspots",
+    description="View your weakest topics that need more practice")
+async def show_weak_spots(interaction: discord.Interaction):
+    """Display user's weakest topics with detailed performance metrics."""
+    await interaction.response.defer()
+    
+    user_discord_id = interaction.user.id
+    user_data = await get_user_data(user_discord_id, str(interaction.user.name))
+    
+    if not user_data.get("selected_cert"):
+        error_embed = discord.Embed(
+            title="No Certification Selected",
+            description="Please select a certification first using `/selectcert`",
+            color=0xff6b6b)
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
+        return
+    
+    certification = user_data["selected_cert"]
+    
+    try:
+        # Get weak spots data
+        weak_spots = await get_weak_spots(user_discord_id, certification, 8)
+        
+        # Create weak spots embed
+        weakspots_embed = discord.Embed(
+            title=f"Weak Spots Analysis • {certification}",
+            description="*Topics that need more practice and attention*",
+            color=0x2B2D31)
+        
+        if weak_spots:
+            # Create formatted weak spots display
+            weak_text = "```ansi\n\u001b[37m\u001b[1mTopic                    Attempts  Accuracy\u001b[0m\n"
+            weak_text += "─" * 45 + "\n"
+            
+            for spot in weak_spots:
+                topic_name = spot['topic'][:20].ljust(20)  # Truncate and pad
+                attempts = spot['questions_attempted']
+                accuracy = spot['accuracy'] if spot['accuracy'] is not None else 0.0
+                
+                # Color coding based on accuracy
+                color = "\u001b[31m" if accuracy < 50 else "\u001b[33m" if accuracy < 70 else "\u001b[32m"
+                weak_text += f"{topic_name}  {color}{attempts:>8}  {accuracy:>6.1f}%\u001b[0m\n"
+            
+            weak_text += "```"
+            
+            weakspots_embed.add_field(
+                name="🎯 **Focus Areas**",
+                value=weak_text,
+                inline=False)
+            
+            # Add recommendations
+            weakspots_embed.add_field(
+                name="💡 **Recommendations**",
+                value="• Focus on topics with lowest accuracy\n"
+                      "• Use `/practice beginner` for struggling areas\n"
+                      "• Review `/explain <topic>` for better understanding\n"
+                      "• Aim for 80%+ accuracy before advancing",
+                inline=False)
+            
+        else:
+            weakspots_embed.add_field(
+                name="🎉 **Great Job!**",
+                value="No weak spots detected yet!\n"
+                      "Keep practicing to build your performance data.",
+                inline=False)
+        
+        weakspots_embed.set_footer(
+            text="Practice more to improve these areas • Updates in real-time")
+        
+        await interaction.followup.send(embed=weakspots_embed)
+        print(f"🎯 {interaction.user.name} viewed their weak spots")
+        
+    except Exception as e:
+        error_embed = discord.Embed(
+            title="Weak Spots Error",
+            description="Unable to load weak spots data. Please try again.",
+            color=0xff6b6b)
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
+        print(f"❌ Weak spots error: {e}")
+
+
+@study_bot.tree.command(
+    name="achievements", 
+    description="View your earned badges and achievement progress")
+async def show_achievements(interaction: discord.Interaction):
+    """Display user's earned achievements and badges."""
+    await interaction.response.defer()
+    
+    user_discord_id = interaction.user.id
+    
+    try:
+        # Get user achievements
+        user_achievements = await get_user_achievements(user_discord_id)
+        
+        # Create achievements embed
+        achievements_embed = discord.Embed(
+            title="🏆 Your Achievements",
+            description="*Badges earned through dedication and skill*",
+            color=0x2B2D31)
+        
+        if user_achievements:
+            # Group achievements by category
+            categories = {}
+            total_points = 0
+            
+            for achievement in user_achievements:
+                category = achievement['category']
+                if category not in categories:
+                    categories[category] = []
+                categories[category].append(achievement)
+                total_points += achievement['points']
+            
+            # Display achievements by category
+            category_emojis = {
+                'accuracy': '🎯',
+                'volume': '📈', 
+                'mastery': '👑',
+                'streak': '🔥'
+            }
+            
+            for category, achievements in categories.items():
+                emoji = category_emojis.get(category, '🏅')
+                category_text = ""
+                
+                for achievement in achievements:
+                    earned_date = achievement['earned_at'].strftime("%m/%d/%y")
+                    category_text += f"**{achievement['achievement_name']}** `+{achievement['points']}pts`\n"
+                    category_text += f"*{achievement['achievement_description']}* • {earned_date}\n\n"
+                
+                achievements_embed.add_field(
+                    name=f"{emoji} **{category.title()} Achievements**",
+                    value=category_text.strip(),
+                    inline=False)
+            
+            # Add total points
+            achievements_embed.add_field(
+                name="💎 **Achievement Score**",
+                value=f"**{total_points}** total points earned\n"
+                      f"**{len(user_achievements)}** badges unlocked",
+                inline=False)
+            
+        else:
+            achievements_embed.add_field(
+                name="🌟 **Start Your Journey**",
+                value="No achievements earned yet!\n\n"
+                      "• Answer questions to earn **Accuracy Master**\n"
+                      "• Complete 100+ questions for **Question Warrior**\n"
+                      "• Build study streaks for **dedication badges**\n"
+                      "• Master topics for **expertise recognition**",
+                inline=False)
+        
+        achievements_embed.set_footer(
+            text="Keep studying to unlock more achievements!")
+        
+        await interaction.followup.send(embed=achievements_embed)
+        print(f"🏆 {interaction.user.name} viewed their achievements")
+        
+    except Exception as e:
+        error_embed = discord.Embed(
+            title="Achievements Error", 
+            description="Unable to load achievements data. Please try again.",
+            color=0xff6b6b)
+        await interaction.followup.send(embed=error_embed, ephemeral=True)
+        print(f"❌ Achievements error: {e}")
+
+
 # ═══════════════════════════════════════════════════════════════════════════════════
 # HELP & INFORMATION COMMANDS
 # ═══════════════════════════════════════════════════════════════════════════════════
@@ -760,13 +927,15 @@ async def show_help_menu(interaction: discord.Interaction):
                          value="`/practice` Practice questions\n"
                          "`/analysis` Study insights\n"
                          "`/flashcards` Create cards\n"
-                         "`/explain` Get explanations",
+                         "`/explain` Get explanations\n"
+                         "`/weakspots` Focus areas",
                          inline=True)
 
     # Productivity
     help_embed.add_field(name="🏆 Productivity",
                          value="`/pomodoro` Study sessions\n"
                          "`/leaderboard` Rankings\n"
+                         "`/achievements` Your badges\n"
                          "`/stoppomodoro` End session",
                          inline=True)
 

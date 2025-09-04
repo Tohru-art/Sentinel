@@ -67,11 +67,15 @@ An advanced AI-powered Discord bot designed for comprehensive study assistance a
 - `/practice [difficulty] [count]` - Generate AI practice questions (1-5)
 - `/flashcards [topic] [count]` - Create AI flashcards (1-10)
 - `/explain <topic>` - Get detailed AI explanations of topics
+- `/analysis` - View comprehensive AI-powered study analysis
+- `/weakspots` - View weakest topics that need practice
 
 ### Productivity Tools
 - `/pomodoro [session_type]` - Start study/break timer sessions
 - `/stoppomodoro` - Stop current Pomodoro session
 - `/pomodorostatus` - Check current session progress
+- `/leaderboard` - View competitive rankings and study leaders
+- `/achievements` - View earned badges and achievement progress
 
 ### Security Tools  
 - `/passwordcheck <password>` - Analyze password strength with time-to-crack scenarios
@@ -85,7 +89,7 @@ An advanced AI-powered Discord bot designed for comprehensive study assistance a
 ✅ Comprehensive UI makeover with consistent modern styling across all 17 commands
 ✅ Advanced cybersecurity tools including password analyzer with time-to-crack scenarios
 ✅ Professional monitoring setup with UptimeRobot JSON health endpoint
-✅ All 17 slash commands operational and synced successfully
+✅ All 20 slash commands operational and synced successfully
 ✅ Rebranded to "Sentinel" - universal AI study bot for any subject
 ✅ Clean project structure with proper .gitignore
 ✅ **Ready for GitHub upload** - codebase cleaned and organized
