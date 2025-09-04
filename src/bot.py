@@ -732,24 +732,23 @@ async def show_about_info(interaction: discord.Interaction):
         color=0x5865F2
     )
     
-    # Developer info with hyperlink
+    # Developer info with hyperlink - more spaced out
     about_embed.add_field(
-        name="👨‍💻 Developer",
-        value="**[Yorouki](https://github.com/Tohru-art)**\n*Open source project*",
+        name="👨‍💻 **Developer**",
+        value="**[Yorouki](https://github.com/Tohru-art)**\n*Open source project • 2025*",
+        inline=False
+    )
+    
+    # Version and Status - cleaner layout
+    about_embed.add_field(
+        name="🚀 **Version**",
+        value="**2.0.0** • 18 commands",
         inline=True
     )
     
-    # Version info
     about_embed.add_field(
-        name="🚀 Version",
-        value="**2.0.0**\n*18 commands*",
-        inline=True
-    )
-    
-    # Status
-    about_embed.add_field(
-        name="💫 Status", 
-        value="**100% Free**\n*Always will be*",
+        name="💫 **Status**", 
+        value="**100% Free** • Always will be",
         inline=True
     )
     
@@ -767,10 +766,10 @@ async def show_about_info(interaction: discord.Interaction):
     
     # Links section with proper hyperlinks
     about_embed.add_field(
-        name="🔗 Links",
+        name="🔗 **Links**",
         value="📂 **[GitHub Repository](https://github.com/Tohru-art/Sentinel)**\n"
               "⭐ **[Star on GitHub](https://github.com/Tohru-art/Sentinel)**\n"
-              "🤖 **[Invite Sentinel](https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID)**",
+              "🤖 **[Invite Sentinel](https://discord.com/oauth2/authorize?client_id=1411994134516076554&permissions=8&integration_type=0&scope=bot+applications.commands)**",
         inline=False
     )
     
