@@ -1046,7 +1046,7 @@ async def show_about_info(interaction: discord.Interaction):
 
     # Version info
     about_embed.add_field(name="🚀 Version",
-                          value="**2.0.0**\n*18 commands*",
+                          value="**2.0.0**\n*20 commands*",
                           inline=True)
 
     # Status
