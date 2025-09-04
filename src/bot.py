@@ -48,9 +48,14 @@ pomodoro_sessions = {}  # Active Pomodoro timers
 @study_bot.event
 async def on_ready():
     """Event handler for when bot successfully connects to Discord"""
-    print(f"🚀 CompTIA Study Bot is online as {study_bot.user}")
+    print(f"🚀 Sentinel AI Study Bot is online as {study_bot.user}")
     print(f"   📊 Connected to {len(study_bot.guilds)} Discord servers")
     print(f"   👥 Serving {len(set(study_bot.get_all_members()))} total users")
+    
+    # Set custom "Playing" status with creator credit
+    activity = discord.Activity(type=discord.ActivityType.playing, name="/help — Created by Yorouki")
+    await study_bot.change_presence(activity=activity)
+    print(f"   🎯 Status set: Playing /help — Created by Yorouki")
     
     # Start the heartbeat task
     study_bot.loop.create_task(daily_heartbeat_task())
@@ -708,7 +713,8 @@ async def show_help_menu(interaction: discord.Interaction):
     # System
     help_embed.add_field(
         name="⚙️ System",
-        value="`/ping` Bot status",
+        value="`/ping` Bot status\n"
+              "`/about` Bot info & credits",
         inline=True
     )
     
@@ -716,6 +722,71 @@ async def show_help_menu(interaction: discord.Interaction):
     
     await interaction.response.send_message(embed=help_embed)
     print(f"❓ {interaction.user.name} viewed the help menu")
+
+@study_bot.tree.command(name="about", description="View bot information, creator credits, and development details")
+async def show_about_info(interaction: discord.Interaction):
+    """Display bot information and creator credits."""
+    about_embed = discord.Embed(
+        title="About Sentinel AI Study Bot",
+        description="*Professional AI-powered study assistant for Discord*",
+        color=0x2B2D31
+    )
+    
+    # Bot Information
+    about_embed.add_field(
+        name="🤖 **Bot Details**",
+        value="**Name:** Sentinel AI Study Bot\n"
+              "**Version:** 2.0.0\n"
+              "**Features:** 17+ Commands\n"
+              "**Status:** 100% Free",
+        inline=True
+    )
+    
+    # Creator Credits
+    about_embed.add_field(
+        name="👨‍💻 **Created By**",
+        value="**Developer:** Yorouki\n"
+              "**GitHub:** Coming Soon\n"
+              "**Type:** Open Source Project\n"
+              "**Year:** 2025",
+        inline=True
+    )
+    
+    # Technical Stack
+    about_embed.add_field(
+        name="⚡ **Technology**",
+        value="**Language:** Python 3.11\n"
+              "**AI:** OpenAI GPT-3.5\n"
+              "**Framework:** Discord.py\n"
+              "**Platform:** Replit",
+        inline=True
+    )
+    
+    # Key Features
+    about_embed.add_field(
+        name="✨ **Key Features**",
+        value="• AI Practice Questions & Explanations\n"
+              "• Smart Flashcard Generation\n"
+              "• Adaptive Learning System\n"
+              "• Cybersecurity Tools\n"
+              "• Pomodoro Study Sessions\n"
+              "• Progress Tracking & Analytics",
+        inline=False
+    )
+    
+    # Support Information
+    about_embed.add_field(
+        name="🛠️ **Support & Development**",
+        value="Sentinel is actively maintained and updated regularly.\n"
+              "All features are completely free to encourage learning!\n"
+              "⭐ Star us on GitHub when released!",
+        inline=False
+    )
+    
+    about_embed.set_footer(text="Made with ❤️ by Yorouki • Powered by AI")
+    
+    await interaction.response.send_message(embed=about_embed)
+    print(f"ℹ️ {interaction.user.name} viewed bot information")
 
 # ═══════════════════════════════════════════════════════════════════════════════════
 # AI LEARNING TOOLS (FLASHCARDS & EXPLANATIONS)
