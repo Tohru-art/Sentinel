@@ -725,65 +725,54 @@ async def show_help_menu(interaction: discord.Interaction):
 
 @study_bot.tree.command(name="about", description="View bot information, creator credits, and development details")
 async def show_about_info(interaction: discord.Interaction):
-    """Display bot information and creator credits with clean professional UI."""
+    """Display bot information with beautiful, clean design."""
     about_embed = discord.Embed(
-        title="About Sentinel AI Study Bot",
-        description="*Professional AI-powered study assistant for Discord*",
-        color=0x2B2D31
+        title="✨ Sentinel",
+        description="*AI-powered study companion for Discord*",
+        color=0x5865F2
     )
     
-    # Clean Bot Details Section
+    # Developer info with hyperlink
     about_embed.add_field(
-        name="🤖 **Bot Details**",
-        value="**Name:** Sentinel AI Study Bot\n"
-              "**Version:** 2.0.0\n" 
-              "**Features:** 18 Commands\n"
-              "**Status:** 100% Free",
+        name="👨‍💻 Developer",
+        value="**[Yorouki](https://github.com/Tohru-art)**\n*Open source project*",
         inline=True
     )
     
-    # Creator Credits Section  
+    # Version info
     about_embed.add_field(
-        name="👨‍💻 **Created By**",
-        value="**Developer:** Yorouki\n"
-              "**GitHub:** github.com/Tohru-art/Sentinel\n"
-              "**Type:** Open Source Project\n"
-              "**Year:** 2025",
+        name="🚀 Version",
+        value="**2.0.0**\n*18 commands*",
         inline=True
     )
     
-    # Technology Stack Section
+    # Status
     about_embed.add_field(
-        name="⚡ **Technology**",
-        value="**Language:** Python 3.11\n"
-              "**AI:** OpenAI GPT-3.5\n"
-              "**Framework:** Discord.py\n" 
-              "**Platform:** Replit",
+        name="💫 Status", 
+        value="**100% Free**\n*Always will be*",
         inline=True
     )
     
-    # Key Features with clean formatting
+    # Main features - clean and simple
     about_embed.add_field(
-        name="✨ **Key Features**",
-        value="+ AI Practice Questions & Explanations\n"
-              "+ Smart Flashcard Generation\n"
-              "+ Adaptive Learning System\n"
-              "+ Cybersecurity Tools Suite\n"
-              "+ Pomodoro Study Sessions\n"
-              "+ Progress Tracking & Analytics",
+        name="⚡ Core Features",
+        value="🧠 **AI Study Tools** • Practice questions, flashcards, explanations\n"
+              "🔒 **Security Suite** • Password analyzer, port scanner, IP lookup\n" 
+              "📊 **Progress Tracking** • Analytics, leaderboards, achievements\n"
+              "⏰ **Productivity** • Pomodoro sessions, study management",
         inline=False
     )
     
-    # Support Section
+    # Links section with proper hyperlinks
     about_embed.add_field(
-        name="🛠️ **Support & Development**",
-        value="Sentinel is actively maintained and updated regularly.\n"
-              "All features are completely free to encourage learning!\n"
-              "⭐ **Star us on GitHub:** github.com/Tohru-art/Sentinel",
+        name="🔗 Links",
+        value="📂 **[GitHub Repository](https://github.com/Tohru-art/Sentinel)**\n"
+              "⭐ **[Star on GitHub](https://github.com/Tohru-art/Sentinel)**\n"
+              "🤖 **[Invite Sentinel](https://discord.com/oauth2/authorize?client_id=YOUR_BOT_ID)**",
         inline=False
     )
     
-    about_embed.set_footer(text="Made with ❤️ by Yorouki • Powered by AI")
+    about_embed.set_footer(text="Made with ❤️ by Yorouki • Powered by OpenAI")
     
     await interaction.response.send_message(embed=about_embed)
     print(f"ℹ️ {interaction.user.name} viewed bot information")
