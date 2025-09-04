@@ -1,0 +1,6 @@
+discord.py>=2.6.3
+openai>=1.105.0
+flask>=3.0.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+psycopg2-binary
