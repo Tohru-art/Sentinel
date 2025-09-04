@@ -755,11 +755,13 @@ async def show_about_info(interaction: discord.Interaction):
     
     # Main features - clean and simple
     about_embed.add_field(
-        name="⚡ Core Features",
-        value="🧠 **AI Study Tools** • Practice questions, flashcards, explanations\n"
-              "🔒 **Security Suite** • Password analyzer, port scanner, IP lookup\n" 
-              "📊 **Progress Tracking** • Analytics, leaderboards, achievements\n"
-              "⏰ **Productivity** • Pomodoro sessions, study management",
+        name="✨ **Key Features**",
+        value="+ AI Practice Questions & Explanations\n"
+              "+ Smart Flashcard Generation\n"
+              "+ Adaptive Learning System\n"
+              "+ Cybersecurity Tools Suite\n"
+              "+ Pomodoro Study Sessions\n"
+              "+ Progress Tracking & Analytics",
         inline=False
     )
     
