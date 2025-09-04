@@ -94,10 +94,13 @@ An advanced AI-powered Discord bot designed for comprehensive study assistance a
 ✅ Clean project structure with proper .gitignore
 ✅ **Ready for GitHub upload** - codebase cleaned and organized
 
-## Recent Changes
+## Recent Changes  
+- **Enhanced Practice UI**: Completely redesigned practice questions with modern visual design and persistent history
+- **New Gamification Features**: Added `/weakspots` and `/achievements` commands for better user engagement
+- **Improved JSON Parsing**: Enhanced AI question generation with robust error handling
 - **Universal Rebranding**: Changed to "Sentinel" - AI study bot for any subject (not just CompTIA)
 - **GitHub Preparation**: Cleaned up project structure and removed debugging files
-- **Complete UI Overhaul**: Applied futuristic, sleek, professional design to all 17 commands
+- **Complete UI Overhaul**: Applied futuristic, sleek, professional design to all 20 commands
 - **Advanced Security Tools**: Password strength analyzer with time-to-crack scenarios and cybersecurity focus
 - **Professional Monitoring**: Enhanced health endpoint with JSON status responses for UptimeRobot
 - **Modern Design System**: Consistent dark theme (#2B2D31) with professional typography and spacing
