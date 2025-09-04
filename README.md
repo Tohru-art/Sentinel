@@ -6,16 +6,19 @@ An advanced AI-powered Discord bot designed for comprehensive study assistance a
 ## Features
 
 ### AI Learning Tools
-- **Smart Practice Questions**: AI-generated multiple-choice questions with detailed explanations
+- **Smart Practice Questions**: AI-generated multiple-choice questions with persistent chat history and detailed explanations
 - **Topic Explanations**: Detailed AI explanations for any study subject
 - **Flashcards**: Smart flashcard generation for key concepts and terms
-- **Study Analytics**: Advanced progress tracking and weak spot analysis
+- **Study Analytics**: Advanced progress tracking and AI-powered weak spot analysis
+- **Adaptive Learning**: Personalized difficulty adjustment based on performance
 - **Difficulty Levels**: Beginner, Intermediate, and Advanced question difficulty
 
 ### Productivity Features
 - **Pomodoro Timer**: 25-minute study sessions with 5/15-minute breaks
 - **Session Management**: Track active study sessions with progress indicators
 - **Break Reminders**: Automated notifications for study session completion
+- **Gamification System**: Achievement badges, leaderboards, and competitive rankings
+- **Progress Tracking**: Comprehensive study analytics and streak tracking
 
 ### Cybersecurity Tools
 - **Password Strength Analyzer**: Advanced password security analysis with time-to-crack scenarios
@@ -59,8 +62,8 @@ An advanced AI-powered Discord bot designed for comprehensive study assistance a
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/sentinel-ai-study-bot.git
-cd sentinel-ai-study-bot
+git clone https://github.com/Tohru-art/Sentinel.git
+cd Sentinel
 ```
 
 ### 2. Install Dependencies
@@ -88,14 +91,18 @@ python main.py
 - `/studystats` - View comprehensive study progress and statistics
 
 ### AI Study Tools
-- `/practice [difficulty] [count]` - Generate AI practice questions (1-5)
+- `/practice [difficulty] [count]` - Generate AI practice questions with persistent chat history (1-5)
 - `/flashcards [topic] [count]` - Create AI flashcards (1-10)
 - `/explain <topic>` - Get detailed AI explanations of topics
+- `/analysis` - View comprehensive AI-powered study analysis
+- `/weakspots` - View weakest topics that need practice
 
 ### Productivity Tools
 - `/pomodoro [session_type]` - Start study/break timer sessions
 - `/stoppomodoro` - Stop current Pomodoro session
 - `/pomodorostatus` - Check current session progress
+- `/leaderboard` - View competitive rankings and study leaders
+- `/achievements` - View earned badges and achievement progress
 
 ### Security Tools  
 - `/passwordcheck <password>` - Analyze password strength with time-to-crack scenarios
@@ -155,4 +162,13 @@ If you encounter any issues or have questions, please open an issue on GitHub or
 
 ---
 
-**⭐ Star this repo if you find it helpful!**# Test commit
+## Key Features Highlights
+- 🚀 **20 Total Commands** - Comprehensive study toolkit
+- 🎨 **Modern UI Design** - Professional dark theme with sleek visual components  
+- 🤖 **Advanced AI Integration** - GPT-3.5-turbo powered content generation
+- 🏆 **Gamification System** - Achievements, leaderboards, and progress tracking
+- 🔒 **Cybersecurity Focus** - Built-in security tools and password analysis
+- 📊 **Smart Analytics** - AI-powered weak spot identification and study insights
+- ⚡ **Real-time Performance** - Instant responses with professional monitoring
+
+**⭐ Star this repo if you find it helpful!**
