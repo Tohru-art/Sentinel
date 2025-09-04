@@ -326,35 +326,65 @@ async def generate_practice_questions(interaction: discord.Interaction, difficul
     await interaction.response.defer()
     
     try:
-        # Create AI prompt for question generation
-        focused_domains = ', '.join(cert_details['domains'][:3])
+        # Create comprehensive AI prompt for realistic exam questions
+        all_domains = cert_details['domains']
+        import random
         
-        ai_prompt = f"""Generate {validated_count} {difficulty}-level multiple choice practice question(s) for CompTIA {user_certification} certification.
-
-For each question:
-- Focus on domains: {focused_domains}
-- Create 4 answer choices (A, B, C, D)
-- Provide detailed explanations for correct answers
-- Use realistic exam-style scenarios
-- Include technical depth appropriate for {difficulty} level
-
-Format as JSON array with objects containing:
-- "question": "Question text"
-- "options": {{"A": "option text", "B": "option text", "C": "option text", "D": "option text"}}
-- "answer": "A" (correct letter)
-- "explanation": "Detailed explanation of why this is correct"
-
-Return valid JSON only."""
+        # Select random domains to ensure variety across all certification areas
+        selected_domains = random.sample(all_domains, min(3, len(all_domains)))
+        focused_domains = ', '.join(selected_domains)
         
-        # Generate questions using OpenAI
+        # Enhanced prompt for realistic CompTIA exam questions
+        ai_prompt = f"""Generate {validated_count} realistic CompTIA {user_certification} certification exam question(s) at {difficulty} difficulty level.
+
+CRITICAL REQUIREMENTS - Must follow actual CompTIA exam style:
+
+DOMAINS TO COVER: {focused_domains}
+(Rotate between: {', '.join(all_domains)})
+
+QUESTION TYPES TO USE:
+1. Scenario-based questions with real workplace situations
+2. Technical troubleshooting problems
+3. Best practice and procedure questions  
+4. Configuration and implementation scenarios
+5. Security incident response situations
+
+DIFFICULTY STANDARDS:
+- Beginner: Basic concepts, definitions, simple scenarios
+- Intermediate: Multi-step processes, analysis, common workplace issues
+- Advanced: Complex scenarios, expert-level troubleshooting, integration challenges
+
+REALISTIC EXAM STYLE:
+- Use actual technology names, tools, and protocols
+- Include realistic port numbers, IP addresses, error codes
+- Add specific vendor technologies (Microsoft, Cisco, etc.)
+- Use real command-line examples and configurations
+- Include workplace scenarios (help desk, network admin, etc.)
+
+QUESTION STRUCTURE:
+- Question length: 2-4 sentences with context
+- All 4 distractors must be plausible but clearly incorrect
+- Correct answer should be definitively correct
+- Explanation must include WHY correct and WHY others are wrong
+
+TOPICS TO INCLUDE (select randomly):
+{user_certification} specific: {', '.join(all_domains)}
+
+FORMAT REQUIREMENT:
+Return valid JSON array ONLY with structure:
+[{{"question": "detailed scenario-based question", "options": {{"A": "option", "B": "option", "C": "option", "D": "option"}}, "answer": "correct letter", "explanation": "comprehensive explanation covering why correct answer is right and why others are wrong"}}]
+
+Generate questions that a CompTIA {user_certification} candidate would actually encounter on the real exam."""
+        
+        # Generate questions using OpenAI with enhanced parameters
         response = await openai_client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
-                {"role": "system", "content": "You are an expert CompTIA certification instructor creating practice questions."},
+                {"role": "system", "content": f"You are a CompTIA {user_certification} subject matter expert with 15+ years of IT experience. You write realistic certification exam questions that mirror actual CompTIA exam style, difficulty, and technical accuracy. You understand real-world IT scenarios, current technologies, and industry best practices."},
                 {"role": "user", "content": ai_prompt}
             ],
-            max_tokens=2000,
-            temperature=0.7
+            max_tokens=2000,  # Increased for more detailed questions
+            temperature=0.7   # Balanced creativity and accuracy
         )
         
         # Parse the AI response
