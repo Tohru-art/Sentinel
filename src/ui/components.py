@@ -223,31 +223,59 @@ class PracticeQuestionView(discord.ui.View):
             if hasattr(item, 'disabled'):
                 item.disabled = True
             
-        # Create result embed
-        result_embed = discord.Embed(
-            title=feedback_title,
+        # Get the original question embed to preserve it
+        original_embed = self.original_message.embeds[0] if self.original_message.embeds else None
+        
+        # Create combined embed that shows BOTH question and result
+        combined_embed = discord.Embed(
+            title=f"Question {self.question_number}/{self.total_questions} • {self.certification or 'Practice'}",
+            description=f"**{self.question_text}**" if self.question_text else original_embed.description if original_embed else "",
             color=result_color
         )
         
-        # Show both answers in a cleaner format
-        answer_comparison = f"**Your Answer:** {result_emoji} {selected_answer.upper()}\n"
-        answer_comparison += f"**Correct Answer:** ✅ {self.correct_answer}\n"
-        answer_comparison += f"**Score Change:** {score_change} (Total: {user_data['study_score']})"
+        # Add original answer choices if available
+        if original_embed:
+            for field in original_embed.fields:
+                if "Answer Choices" in field.name or "Select your answer" in field.name:
+                    combined_embed.add_field(
+                        name="📝 Answer Choices",
+                        value=field.value,
+                        inline=False
+                    )
         
-        result_embed.add_field(
-            name="📊 Results Summary",
+        # Add modern result section with visual hierarchy
+        result_header = f"{result_emoji} **{feedback_title}**"
+        
+        answer_comparison = f"```ansi\n"
+        if is_correct:
+            answer_comparison += f"\u001b[32m✅ Your Answer: {selected_answer.upper()}\u001b[0m\n"
+            answer_comparison += f"\u001b[32m🎯 Correct Answer: {self.correct_answer}\u001b[0m\n"
+        else:
+            answer_comparison += f"\u001b[31m❌ Your Answer: {selected_answer.upper()}\u001b[0m\n"
+            answer_comparison += f"\u001b[32m🎯 Correct Answer: {self.correct_answer}\u001b[0m\n"
+        answer_comparison += f"\u001b[36m📊 Score: {score_change} (Total: {user_data['study_score']})\u001b[0m\n```"
+        
+        combined_embed.add_field(
+            name=result_header,
             value=answer_comparison,
             inline=False
         )
         
-        result_embed.add_field(
-            name="Explanation",
-            value=self.explanation,
+        # Add explanation with better formatting
+        explanation_text = f"💡 **Explanation:**\n{self.explanation}"
+        combined_embed.add_field(
+            name="\u200b",  # Invisible character for spacing
+            value=explanation_text,
             inline=False
         )
         
-        # Update message with results
-        await interaction.response.edit_message(embed=result_embed, view=self)
+        # Add completion status
+        combined_embed.set_footer(
+            text=f"Question {self.question_number}/{self.total_questions} completed • {len(self.remaining_questions)} remaining"
+        )
+        
+        # Update message with combined question + result
+        await interaction.response.edit_message(embed=combined_embed, view=self)
         print(f"📝 {interaction.user.name} answered {selected_answer} - {'✅ Correct' if is_correct else '❌ Wrong'} (Score: {user_data['study_score']})")
         
         # Brief pause before showing next question
@@ -304,25 +332,44 @@ class PracticeQuestionView(discord.ui.View):
         except:
             cert_name = 'Unknown'
             
-        # Create next question embed
+        # Create modern, professional question embed
         question_embed = discord.Embed(
-            title=f"📝 Practice Question {next_question_number}/{self.total_questions} - {cert_name}",
-            description=question_content,
-            color=0x7289da
+            title=f"Practice Question {next_question_number}/{self.total_questions}",
+            description=f"**{question_content}**",
+            color=0x2B2D31  # Professional dark theme
         )
         
-        # Add the multiple choice options to the embed
+        # Add certification badge
+        question_embed.set_author(
+            name=f"📚 {cert_name} Certification Practice"
+        )
+        
+        # Add the multiple choice options with modern styling
         if 'options' in next_question_data:
-            options_text = ""
+            options_text = "```\n"
             for letter, option in next_question_data['options'].items():
-                options_text += f"**{letter.upper()})** {option}\n"
+                options_text += f"{letter.upper()})  {option}\n"
+            options_text += "```"
             question_embed.add_field(
-                name="Answer Choices",
+                name="📝 Select your answer:",
                 value=options_text,
                 inline=False
             )
         
-        question_embed.set_footer(text="⏰ Time remaining: 60 seconds - Click a button to answer!")
+        # Add progress bar visual
+        progress_filled = "█" * next_question_number
+        progress_empty = "░" * (self.total_questions - next_question_number)
+        progress_bar = f"```[{progress_filled}{progress_empty}] {next_question_number}/{self.total_questions}```"
+        
+        question_embed.add_field(
+            name="📊 Progress",
+            value=progress_bar,
+            inline=False
+        )
+        
+        question_embed.set_footer(
+            text="⏰ 60 seconds to answer • Choose A, B, C, or D below"
+        )
         
         # Create new interactive view
         next_view = PracticeQuestionView(

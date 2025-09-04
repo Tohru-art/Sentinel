@@ -477,24 +477,43 @@ Generate questions that a CompTIA {user_certification} candidate would actually 
         remaining_questions = parsed_questions[1:] if len(
             parsed_questions) > 1 else []
 
-        # Create first question embed
+        # Create modern first question embed
         first_question_embed = discord.Embed(
-            title=
-            f"Practice Question 1/{len(parsed_questions)} • {user_certification} ({difficulty.title()})",
-            description=f"*{first_question['question']}*",
+            title=f"Practice Question 1/{len(parsed_questions)}",
+            description=f"**{first_question['question']}**",
             color=0x2B2D31)
 
-        # Add the multiple choice options to the embed
+        # Add certification badge
+        first_question_embed.set_author(
+            name=f"📚 {user_certification} Certification Practice • {difficulty.title()}"
+        )
+
+        # Add the multiple choice options with modern styling
         if 'options' in first_question:
-            options_text = ""
+            options_text = "```\n"
             for letter, option in first_question['options'].items():
-                options_text += f"**{letter.upper()})** {option}\n"
-            first_question_embed.add_field(name="Answer Choices",
-                                           value=options_text,
-                                           inline=False)
+                options_text += f"{letter.upper()})  {option}\n"
+            options_text += "```"
+            first_question_embed.add_field(
+                name="📝 Select your answer:",
+                value=options_text,
+                inline=False
+            )
+
+        # Add progress bar visual
+        progress_filled = "█" * 1
+        progress_empty = "░" * (len(parsed_questions) - 1) 
+        progress_bar = f"```[{progress_filled}{progress_empty}] 1/{len(parsed_questions)}```"
+        
+        first_question_embed.add_field(
+            name="📊 Progress",
+            value=progress_bar,
+            inline=False
+        )
 
         first_question_embed.set_footer(
-            text="⏰ Time remaining: 60 seconds - Click a button to answer!")
+            text="⏰ 60 seconds to answer • Choose A, B, C, or D below"
+        )
 
         # Create interactive view with buttons for first question
         first_question_view = PracticeQuestionView(
