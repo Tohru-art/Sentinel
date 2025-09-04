@@ -1011,8 +1011,9 @@ async def show_help_menu(interaction: discord.Interaction):
                          inline=True)
 
     # Fun & System
-    help_embed.add_field(name="🎱 Fun & System",
+    help_embed.add_field(name="🎲 Fun & System",
                          value="`/8ball` Magic 8-Ball answers\n"
+                         "`/roll` Dice rolling games\n"
                          "`/ping` Bot status\n"
                          "`/about` Bot info & credits",
                          inline=True)
@@ -1047,7 +1048,7 @@ async def show_about_info(interaction: discord.Interaction):
 
     # Version info
     about_embed.add_field(name="🚀 Version",
-                          value="**2.0.0**\n*21 commands*",
+                          value="**2.0.0**\n*22 commands*",
                           inline=True)
 
     # Status
@@ -1913,6 +1914,119 @@ async def magic_8ball(interaction: discord.Interaction, question: str):
     print(f"🎱 {interaction.user.name} asked the Magic 8-Ball: {question}")
 
 
+@study_bot.tree.command(name="roll", description="Roll dice for games and random decisions!")
+@app_commands.describe(dice="Type of dice to roll (d6, d20, etc.) or custom format like 2d6")
+async def roll_dice(interaction: discord.Interaction, dice: str = "d6"):
+    """Roll various types of dice with beautiful results display."""
+    await interaction.response.defer()
+    
+    import re
+    import random
+    
+    try:
+        # Parse dice notation (e.g., "2d6", "d20", "3d10")
+        dice = dice.lower().strip()
+        
+        # Handle shorthand like "6" -> "d6"
+        if dice.isdigit():
+            dice = f"d{dice}"
+        
+        # Match patterns like "2d6", "d20", etc.
+        match = re.match(r'^(\d*)d(\d+)$', dice)
+        
+        if not match:
+            await interaction.followup.send("❌ Invalid dice format! Try: `d6`, `d20`, `2d6`, etc.", ephemeral=True)
+            return
+        
+        num_dice = int(match.group(1)) if match.group(1) else 1
+        sides = int(match.group(2))
+        
+        # Reasonable limits
+        if num_dice > 10:
+            await interaction.followup.send("❌ Maximum 10 dice at once!", ephemeral=True)
+            return
+        if sides > 100:
+            await interaction.followup.send("❌ Maximum 100 sides per die!", ephemeral=True)
+            return
+        if num_dice < 1 or sides < 2:
+            await interaction.followup.send("❌ Need at least 1 die with 2+ sides!", ephemeral=True)
+            return
+        
+        # Roll the dice!
+        rolls = [random.randint(1, sides) for _ in range(num_dice)]
+        total = sum(rolls)
+        
+        # Create dice embed with fun colors
+        colors = {
+            6: 0xFF6B6B,    # Red for D6
+            20: 0x4ECDC4,   # Teal for D20  
+            10: 0xFFE66D,   # Yellow for D10
+            4: 0x95E1D3,    # Light green for D4
+            8: 0xA8E6CF,    # Green for D8
+            12: 0xDDA0DD    # Plum for D12
+        }
+        color = colors.get(sides, 0x6C5CE7)  # Default purple
+        
+        dice_embed = discord.Embed(
+            title="🎲 Dice Roll Results",
+            description="*Fortune favors the bold!*",
+            color=color)
+        
+        # Dice info
+        dice_name = f"{num_dice}d{sides}" if num_dice > 1 else f"d{sides}"
+        dice_embed.add_field(
+            name="🎯 **Roll Details**",
+            value=f"**Dice:** {dice_name}\n**Sides:** {sides} each",
+            inline=True)
+        
+        # Results
+        if num_dice == 1:
+            result_text = f"**🎲 {rolls[0]}**"
+            
+            # Fun messages for special rolls
+            if rolls[0] == sides:
+                result_text += f"\n🔥 **MAXIMUM ROLL!** 🔥"
+            elif rolls[0] == 1:
+                result_text += f"\n💀 *Critical fail...*"
+            elif rolls[0] >= sides * 0.8:
+                result_text += f"\n⭐ *Great roll!*"
+        else:
+            rolls_text = " + ".join(str(r) for r in rolls)
+            result_text = f"**Rolls:** {rolls_text}\n**Total:** 🎲 **{total}**"
+            
+            # Fun messages for multiple dice
+            if total == num_dice * sides:
+                result_text += f"\n🔥 **PERFECT ROLL!** 🔥"
+            elif total == num_dice:
+                result_text += f"\n💀 *All ones... ouch!*"
+            elif total >= num_dice * sides * 0.8:
+                result_text += f"\n⭐ *Excellent total!*"
+        
+        dice_embed.add_field(
+            name="🎊 **Results**",
+            value=result_text,
+            inline=True)
+        
+        # Add some flavor text
+        flavor_texts = [
+            "🍀 Lady Luck is watching!",
+            "⚡ The dice have spoken!",
+            "🌟 May the odds be in your favor!",
+            "🔮 The fates have decided!",
+            "🎭 Drama unfolds with each roll!"
+        ]
+        dice_embed.set_footer(text=f"🎲 {random.choice(flavor_texts)}")
+        
+        await interaction.followup.send(embed=dice_embed)
+        print(f"🎲 {interaction.user.name} rolled {dice_name}: {rolls}")
+        
+    except Exception as e:
+        await interaction.followup.send(
+            "❌ Something went wrong with the dice roll! Try a format like `d6` or `2d20`.", 
+            ephemeral=True)
+        print(f"❌ Dice roll error: {e}")
+
+
 @study_bot.tree.command(name="ping",
                         description="Check bot response time and status")
 async def ping_bot_status(interaction: discord.Interaction):
@@ -1941,7 +2055,7 @@ async def ping_bot_status(interaction: discord.Interaction):
     ping_embed.add_field(
         name="🔧 **Components**",
         value=
-        f"**Servers:** {len(study_bot.guilds)}\n**Commands:** 21 **Active**\n**Database:** ✅ **Ready**",
+        f"**Servers:** {len(study_bot.guilds)}\n**Commands:** 22 **Active**\n**Database:** ✅ **Ready**",
         inline=True)
 
     ping_embed.set_footer(
