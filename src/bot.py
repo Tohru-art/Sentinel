@@ -63,15 +63,23 @@ async def on_ready():
 @study_bot.tree.error
 async def on_app_command_error(interaction: discord.Interaction,
                                error: app_commands.AppCommandError):
-    """Handle slash command errors gracefully"""
-    if isinstance(error, app_commands.CommandOnCooldown):
-        await interaction.response.send_message(
-            f"Command is on cooldown. Try again in {error.retry_after:.2f} seconds.",
-            ephemeral=True)
-    else:
-        await interaction.response.send_message(
-            "An error occurred while processing your request.", ephemeral=True)
-        print(f"❌ Command error: {error}")
+    """Handle slash command errors gracefully without causing timeout loops"""
+    try:
+        # Check if we can still respond to the interaction
+        if not interaction.response.is_done():
+            if isinstance(error, app_commands.CommandOnCooldown):
+                await interaction.response.send_message(
+                    f"Command is on cooldown. Try again in {error.retry_after:.2f} seconds.",
+                    ephemeral=True)
+            else:
+                await interaction.response.send_message(
+                    "An error occurred while processing your request.", ephemeral=True)
+        else:
+            # Interaction already handled, just log the error
+            print(f"❌ Command error (interaction expired): {error}")
+    except Exception as handler_error:
+        # Don't let error handler cause more errors
+        print(f"❌ Error handler failed: {handler_error}, Original error: {error}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════
@@ -134,6 +142,8 @@ async def daily_heartbeat_task():
                         description="View available CompTIA certifications")
 async def display_certifications(interaction: discord.Interaction):
     """Display all available CompTIA certifications with descriptions."""
+    await interaction.response.defer()
+    
     certifications_embed = discord.Embed(
         title="CompTIA Certifications",
         description=
@@ -155,7 +165,7 @@ async def display_certifications(interaction: discord.Interaction):
 
     certifications_embed.set_footer(
         text="Use /selectcert to choose your track")
-    await interaction.response.send_message(embed=certifications_embed)
+    await interaction.followup.send(embed=certifications_embed)
     print(f"📚 User {interaction.user.name} viewed available certifications")
 
 
@@ -172,6 +182,8 @@ async def display_certifications(interaction: discord.Interaction):
 async def select_certification_focus(interaction: discord.Interaction,
                                      certification: str):
     """Let users select their CompTIA certification focus."""
+    await interaction.response.defer()
+    
     user_discord_id = interaction.user.id
 
     # Get or create user data from database
@@ -214,7 +226,7 @@ async def select_certification_focus(interaction: discord.Interaction,
                               "`/flashcards` Create cards",
                               inline=False)
 
-    await interaction.response.send_message(embed=selection_embed)
+    await interaction.followup.send(embed=selection_embed)
     print(
         f"🎯 User {interaction.user.name} selected {certification} certification"
     )
@@ -1059,7 +1071,8 @@ async def show_about_info(interaction: discord.Interaction):
 
     about_embed.set_footer(text="Made with ❤️ by Yorouki • Powered by OpenAI")
 
-    await interaction.response.send_message(embed=about_embed)
+    await interaction.response.defer()
+    await interaction.followup.send(embed=about_embed)
     print(f"ℹ️ {interaction.user.name} viewed bot information")
 
 
@@ -1076,18 +1089,21 @@ async def create_ai_flashcards(interaction: discord.Interaction,
                                topic: str = None,
                                count: int = 3):
     """Generate AI-powered flashcards for study topics."""
+    # Defer IMMEDIATELY to prevent timeout
+    await interaction.response.defer()
+    
     user_discord_id = interaction.user.id
     user_data = await get_user_data(user_discord_id,
                                     str(interaction.user.name))
 
     if not user_data.get("selected_cert"):
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "❌ Please select a certification first using `/selectcert`!",
             ephemeral=True)
         return
 
     if not openai_client:
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "❌ AI features are currently unavailable. Please check the OpenAI API configuration.",
             ephemeral=True)
         return
@@ -1095,8 +1111,6 @@ async def create_ai_flashcards(interaction: discord.Interaction,
     # Validate count
     validated_count = max(1, min(count, 10))
     certification = user_data["selected_cert"]
-
-    await interaction.response.defer()
 
     try:
         # Generate topic if not provided
