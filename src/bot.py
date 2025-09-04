@@ -76,10 +76,12 @@ async def on_app_command_error(interaction: discord.Interaction,
                     "An error occurred while processing your request.", ephemeral=True)
         else:
             # Interaction already handled, just log the error
-            print(f"❌ Command error (interaction expired): {error}")
+            import logging
+            logging.warning(f"Command error (interaction expired): {error}")
     except Exception as handler_error:
-        # Don't let error handler cause more errors
-        print(f"❌ Error handler failed: {handler_error}, Original error: {error}")
+        # Don't let error handler cause more errors - log silently  
+        import logging
+        logging.error(f"Error handler failed: {handler_error}, Original error: {error}")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════════
@@ -1027,6 +1029,9 @@ async def show_help_menu(interaction: discord.Interaction):
 )
 async def show_about_info(interaction: discord.Interaction):
     """Display bot information with beautiful, clean design."""
+    # Defer IMMEDIATELY to prevent timeout
+    await interaction.response.defer()
+    
     about_embed = discord.Embed(
         title="✨ Sentinel",
         description="*AI-powered study companion for Discord*",
@@ -1071,7 +1076,6 @@ async def show_about_info(interaction: discord.Interaction):
 
     about_embed.set_footer(text="Made with ❤️ by Yorouki • Powered by OpenAI")
 
-    await interaction.response.defer()
     await interaction.followup.send(embed=about_embed)
     print(f"ℹ️ {interaction.user.name} viewed bot information")
 
