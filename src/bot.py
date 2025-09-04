@@ -732,25 +732,29 @@ async def show_about_info(interaction: discord.Interaction):
         color=0x5865F2
     )
     
-    # Developer info with hyperlink - more spaced out
+    # Developer info with hyperlink
     about_embed.add_field(
-        name="👨‍💻 **Developer**",
-        value="**[Yorouki](https://github.com/Tohru-art)**\n*Open source project • 2025*",
-        inline=False
-    )
-    
-    # Version and Status - cleaner layout
-    about_embed.add_field(
-        name="🚀 **Version**",
-        value="**2.0.0** • 18 commands",
+        name="👨‍💻 Developer",
+        value="**[Yorouki](https://github.com/Tohru-art)**\n*Open source project*",
         inline=True
     )
     
+    # Version info  
     about_embed.add_field(
-        name="💫 **Status**", 
-        value="**100% Free** • Always will be",
+        name="🚀 Version",
+        value="**2.0.0**\n*18 commands*",
         inline=True
     )
+    
+    # Status
+    about_embed.add_field(
+        name="💫 Status", 
+        value="**100% Free**",
+        inline=True
+    )
+    
+    # Add spacing with empty field
+    about_embed.add_field(name="\u200b", value="\u200b", inline=False)
     
     # Main features - clean and simple
     about_embed.add_field(
