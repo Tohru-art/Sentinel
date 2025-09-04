@@ -415,7 +415,7 @@ Generate questions that a CompTIA {user_certification} candidate would actually 
             temperature=0.7  # Balanced creativity and accuracy
         )
 
-        # Parse the AI response
+        # Parse the AI response with robust error handling
         ai_response = response.choices[0].message.content
         if ai_response is None:
             raise ValueError("OpenAI returned empty response")
@@ -427,8 +427,29 @@ Generate questions that a CompTIA {user_certification} candidate would actually 
         elif ai_response.startswith("```"):
             ai_response = ai_response[3:-3]
 
-        # Parse JSON response
-        parsed_questions = json.loads(ai_response)
+        # Additional cleanup for common AI response issues
+        ai_response = ai_response.strip()
+        
+        # Parse JSON response with fallback handling
+        try:
+            # First attempt: direct parsing
+            parsed_questions = json.loads(ai_response)
+        except json.JSONDecodeError as e:
+            try:
+                # Second attempt: find and extract JSON array
+                import re
+                json_match = re.search(r'\[.*\]', ai_response, re.DOTALL)
+                if json_match:
+                    json_str = json_match.group(0)
+                    # Fix common JSON issues (unquoted keys)
+                    json_str = re.sub(r'([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:', r'\1"\2":', json_str)
+                    parsed_questions = json.loads(json_str)
+                else:
+                    raise ValueError("No valid JSON array found in AI response")
+            except (json.JSONDecodeError, ValueError):
+                # Log the problematic response for debugging
+                print(f"❌ JSON parsing failed for response: {ai_response[:300]}...")
+                raise ValueError(f"Failed to parse AI response as valid JSON: {str(e)}")
 
         # Ensure it's a list
         if not isinstance(parsed_questions, list):
